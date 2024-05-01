@@ -1,8 +1,1 @@
-{
-    "users": [
-        {
-            "username": "admin",
-            "password": "admin"
-        }
-    ]
-}
+{"users": [{"username": "admin", "password": "admin"}, {"username": "Psolis18", "password": "patrick18"}]}
