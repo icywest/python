@@ -1,23 +1,100 @@
 [
     {
-        "title": "hello",
-        "due_date": "2024-04-30",
-        "priority": "High",
-        "status": "Completed",
-        "comments": "hola"
-    },
-    {
-        "title": "simona",
-        "due_date": "2024-05-07",
+        "title": "Update website layout",
+        "due_date": "2024-05-10",
         "priority": "High",
         "status": "In Progress",
-        "comments": "holashoal"
+        "comments": "Meeting with design team scheduled"
     },
     {
-        "title": "Hola Hola",
-        "due_date": "2024-05-01",
+        "title": "Prepare quarterly report",
+        "due_date": "2024-05-15",
+        "priority": "High",
+        "status": "Not Started",
+        "comments": "Gather data from departments"
+    },
+    {
+        "title": "Client meeting preparation",
+        "due_date": "2024-05-05",
+        "priority": "Medium",
+        "status": "Completed",
+        "comments": "Presentation slides ready"
+    },
+    {
+        "title": "Revise marketing strategy",
+        "due_date": "2024-05-20",
+        "priority": "High",
+        "status": "Not Started",
+        "comments": "Brainstorming session scheduled"
+    },
+    {
+        "title": "Training session planning",
+        "due_date": "2024-05-12",
         "priority": "Medium",
         "status": "In Progress",
-        "comments": "simoa"
+        "comments": "Confirming trainers availability"
+    },
+    {
+        "title": "Budget review",
+        "due_date": "2024-05-08",
+        "priority": "High",
+        "status": "In Progress",
+        "comments": "Waiting for financial reports"
+    },
+    {
+        "title": "Project proposal",
+        "due_date": "2024-05-25",
+        "priority": "High",
+        "status": "Not Started",
+        "comments": "Researching client requirements"
+    },
+    {
+        "title": "Team building activity",
+        "due_date": "2024-05-18",
+        "priority": "Low",
+        "status": "Completed",
+        "comments": "Great turnout, positive feedback"
+    },
+    {
+        "title": "Software update installation",
+        "due_date": "2024-05-06",
+        "priority": "Medium",
+        "status": "In Progress",
+        "comments": "Testing phase ongoing"
+    },
+    {
+        "title": "Monthly review meeting",
+        "due_date": "2024-05-28",
+        "priority": "Medium",
+        "status": "Not Started",
+        "comments": "Agenda to be finalized"
+    },
+    {
+        "title": "Finalize presentation for client pitch",
+        "due_date": "2024-05-02",
+        "priority": "High",
+        "status": "Completed",
+        "comments": "Reviewed by team lead"
+    },
+    {
+        "title": "Submit monthly expense report",
+        "due_date": "2024-05-02",
+        "priority": "Medium",
+        "status": "Completed",
+        "comments": "All receipts accounted for"
+    },
+    {
+        "title": "Follow up with potential vendor",
+        "due_date": "2024-05-02",
+        "priority": "Medium",
+        "status": "In Progress",
+        "comments": "Awaiting response"
+    },
+    {
+        "title": "Send meeting agenda to team members",
+        "due_date": "2024-05-02",
+        "priority": "Low",
+        "status": "Completed",
+        "comments": "Agenda attached in email"
     }
 ]

@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, timedelta
 
 def filter_tasks(tasks, keywords, statuses, priorities):
     filtered_tasks = []
@@ -13,11 +13,25 @@ def filter_tasks(tasks, keywords, statuses, priorities):
 
     return filtered_tasks
 
-def filter_tasks_by_date(tasks, selected_date):
+def filter_tasks_by_date(tasks, selected_date, period='day'):
     filtered_tasks = []
-    for task in tasks:
-        if task.get("due_date") == selected_date:
-            filtered_tasks.append(task)
+    if period == 'day':
+        for task in tasks:
+            if task.get("due_date") == selected_date:
+                filtered_tasks.append(task)
+    elif period == 'week':
+        start_of_week = selected_date - timedelta(days=selected_date.weekday())
+        end_of_week = start_of_week + timedelta(days=6)
+        for task in tasks:
+            if start_of_week <= datetime.strptime(task.get("due_date"), '%Y-%m-%d') <= end_of_week:
+                filtered_tasks.append(task)
+    elif period == 'month':
+        start_of_month = selected_date.replace(day=1)
+        end_of_month = start_of_month.replace(month=start_of_month.month+1, day=1) - timedelta(days=1)
+        for task in tasks:
+            task_due_date = datetime.strptime(task.get("due_date"), '%Y-%m-%d')
+            if start_of_month <= task_due_date <= end_of_month:
+                filtered_tasks.append(task)
     return filtered_tasks
 
 def filter_by_keywords(tasks, keywords):

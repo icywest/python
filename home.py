@@ -1,7 +1,7 @@
 from tkcalendar import Calendar
 import tkinter as tk
 from tkinter import ttk, messagebox
-from datetime import datetime
+from datetime import datetime, timedelta
 import json
 import os
 from visualPart import PieChartWindow
@@ -66,12 +66,20 @@ class HomePage:
         self.calendar_button = ttk.Button(self.main_frame, text="Show Calendar", command=self.show_calendar, style="CalendarButton.TButton")
         self.calendar_button.grid(row=5, column=1, padx=5, pady=5, sticky="ew")
 
+        self.show_today_tasks_button = ttk.Button(self.main_frame, text="Show Today's Tasks", command=self.show_today_tasks, style="ShowTodayTasksButton.TButton")
+        self.show_today_tasks_button.grid(row=7, column=0, padx=5, pady=5, sticky="ew")
+
         self.logout_button = ttk.Button(self.main_frame, text="Logout", command=self.logout, style="LogoutButton.TButton")
-        self.logout_button.grid(row=6, column=0, columnspan=2, padx=5, pady=5, sticky="ew")
+        self.logout_button.grid(row=7, column=1, columnspan=2, padx=5, pady=5, sticky="ew")
 
         
         self.create_filter_widgets()
         self.update_task_list()
+
+    def show_today_tasks(self):
+        today = datetime.today().strftime('%Y-%m-%d')
+        today_tasks = [task for task in self.tasks if task.get("due_date") == today]
+        self.update_task_list(today_tasks)
 
     def show_all_tasks(self):
         self.update_task_list()
@@ -85,24 +93,58 @@ class HomePage:
         ttk.Label(self.filter_frame, text="Filter by Keywords:", style="FilterLabel.TLabel").grid(row=0, column=0, padx=5, pady=5)
         self.keywords_entry = ttk.Entry(self.filter_frame)
         self.keywords_entry.grid(row=0, column=1, padx=5, pady=5)
-        
 
         # Filter Statuses
-        ttk.Label(self.filter_frame, text="Filter by Status:", style="FilterLabel.TLabel").grid(row=2, column=0, padx=5, pady=5)
+        ttk.Label(self.filter_frame, text="Filter by Status:", style="FilterLabel.TLabel").grid(row=1, column=0, padx=5, pady=5)
         self.statuses_var = {status: tk.BooleanVar() for status in ["Pending", "In Progress", "Completed"]}
         for idx, (status, var) in enumerate(self.statuses_var.items()):
-            ttk.Checkbutton(self.filter_frame, text=status, variable=var, style="FilterCheck.TCheckbutton").grid(row=2, column=idx+1, padx=5, pady=5)
+            ttk.Checkbutton(self.filter_frame, text=status, variable=var, style="FilterCheck.TCheckbutton").grid(row=1, column=idx+1, padx=5, pady=5)
 
         # Filter Priority
-        ttk.Label(self.filter_frame, text="Filter by Priority:", style="FilterLabel.TLabel").grid(row=3, column=0, padx=5, pady=5)
+        ttk.Label(self.filter_frame, text="Filter by Priority:", style="FilterLabel.TLabel").grid(row=2, column=0, padx=5, pady=5)
         self.priority_vars = {priority: tk.BooleanVar() for priority in ["Low", "Medium", "High"]}
         for idx, (priority, var) in enumerate(self.priority_vars.items()):
-            ttk.Checkbutton(self.filter_frame, text=priority, variable=var, style="FilterCheck.TCheckbutton").grid(row=3, column=idx+1, padx=5, pady=5)
+            ttk.Checkbutton(self.filter_frame, text=priority, variable=var, style="FilterCheck.TCheckbutton").grid(row=2, column=idx+1, padx=5, pady=5)
+
+        # Filter by Week Button
+        self.filter_week_button = ttk.Button(self.filter_frame, text="Filter by Week", command=self.filter_by_week)
+        self.filter_week_button.grid(row=3, column=0, columnspan=2, padx=5, pady=5)
+
+        # Filter by Month Button
+        self.filter_month_button = ttk.Button(self.filter_frame, text="Filter by Month", command=self.filter_by_month)
+        self.filter_month_button.grid(row=3, column=2, columnspan=2, padx=5, pady=5)
 
         # Filter Button
         self.filter_button = ttk.Button(self.filter_frame, text="Apply Filter", command=self.apply_filter)
         self.filter_button.grid(row=4, column=0, columnspan=2, padx=5, pady=5)
-    
+
+        # Clean Filters Button
+        self.clean_filters_button = ttk.Button(self.filter_frame, text="Clean Filters", command=self.clean_filters, style="CleanFiltersButton.TButton")
+        self.clean_filters_button.grid(row=4, column=2, columnspan=2, padx=5, pady=5)
+
+
+    def filter_by_week(self):
+        today = datetime.today()
+        start_of_week = today - timedelta(days=today.weekday())
+        end_of_week = start_of_week + timedelta(days=6)
+        filtered_tasks = [task for task in self.tasks if start_of_week <= datetime.strptime(task.get("due_date"), '%Y-%m-%d') <= end_of_week]
+        self.update_task_list(filtered_tasks)
+
+    def filter_by_month(self):
+        today = datetime.today()
+        start_of_month = today.replace(day=1)
+        end_of_month = start_of_month.replace(month=start_of_month.month+1, day=1) - timedelta(days=1)
+        filtered_tasks = [task for task in self.tasks if start_of_month <= datetime.strptime(task.get("due_date"), '%Y-%m-%d') <= end_of_month]
+        self.update_task_list(filtered_tasks)
+
+
+    def clean_filters(self):
+        self.keywords_entry.delete(0, tk.END)
+        for var in self.statuses_var.values():
+            var.set(False)
+        for var in self.priority_vars.values():
+            var.set(False)
+        self.update_task_list()
 
     def logout(self):
         self.master.destroy()
