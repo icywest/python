@@ -18,6 +18,12 @@ class HomePage:
         
         self.load_tasks()
         self.create_widgets()
+        self.show_today_tasks()
+
+    def show_today_tasks(self):
+        today = datetime.today().strftime('%Y-%m-%d')
+        today_tasks = [task for task in self.tasks if task.get("due_date") == today]
+        self.update_task_list(today_tasks)
 
     def load_tasks(self):
         tasks_file = os.path.join(self.user_tasks_dir, "tasks.json")
@@ -54,11 +60,22 @@ class HomePage:
         self.show_pie_chart_button = ttk.Button(self.main_frame, text="Show Pie Chart", command=self.show_pie_chart_window, style="ShowPieChartButton.TButton")
         self.show_pie_chart_button.grid(row=4, column=1, padx=5, pady=5, sticky="ew")
         
+        self.show_all_button = ttk.Button(self.main_frame, text="Show All Tasks", command=self.show_all_tasks, style="ShowAllButton.TButton")
+        self.show_all_button.grid(row=5, column=0, padx=5, pady=5, sticky="ew")
+
         self.calendar_button = ttk.Button(self.main_frame, text="Show Calendar", command=self.show_calendar, style="CalendarButton.TButton")
-        self.calendar_button.grid(row=5, column=0, columnspan=2, padx=5, pady=5, sticky="ew")
+        self.calendar_button.grid(row=5, column=1, padx=5, pady=5, sticky="ew")
+
+        self.logout_button = ttk.Button(self.main_frame, text="Logout", command=self.logout, style="LogoutButton.TButton")
+        self.logout_button.grid(row=6, column=0, columnspan=2, padx=5, pady=5, sticky="ew")
+
         
         self.create_filter_widgets()
         self.update_task_list()
+
+    def show_all_tasks(self):
+        self.update_task_list()
+
 
     def create_filter_widgets(self):
         self.filter_frame = ttk.Frame(self.master, style="Filter.TFrame")
@@ -86,6 +103,10 @@ class HomePage:
         self.filter_button = ttk.Button(self.filter_frame, text="Apply Filter", command=self.apply_filter)
         self.filter_button.grid(row=4, column=0, columnspan=2, padx=5, pady=5)
     
+
+    def logout(self):
+        self.master.destroy()
+
     def apply_filter(self):
         keywords = self.keywords_entry.get()
         selected_statuses = [status for status, var in self.statuses_var.items() if var.get()]
@@ -109,8 +130,6 @@ class HomePage:
         filtered_tasks = taskfilter.filter_tasks_by_date(self.tasks, selected_date)
         self.update_task_list(filtered_tasks)
         self.calendar_window.destroy()
-
-
 
     def add_task(self):
         task_dialog = TaskDialog(self.master)
