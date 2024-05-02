@@ -1,13 +1,11 @@
 import tkinter as tk
-from tkinter import ttk
-from tkinter import messagebox
+from tkinter import ttk, messagebox
 from datetime import datetime
 import json
 import os
 from visualPart import PieChartWindow
 from tkcalendar import DateEntry
 import taskfilter
-
 
 class HomePage:
     def __init__(self, master, username):
@@ -66,14 +64,7 @@ class HomePage:
         ttk.Label(self.filter_frame, text="Filter by Keywords:", style="FilterLabel.TLabel").grid(row=0, column=0, padx=5, pady=5)
         self.keywords_entry = ttk.Entry(self.filter_frame)
         self.keywords_entry.grid(row=0, column=1, padx=5, pady=5)
-
-        # Filter Date Range
-        ttk.Label(self.filter_frame, text="Start Date:", style="FilterLabel.TLabel").grid(row=1, column=0, padx=5, pady=5)
-        self.start_date_entry = ttk.Entry(self.filter_frame)
-        self.start_date_entry.grid(row=1, column=1, padx=5, pady=5)
-        ttk.Label(self.filter_frame, text="End Date:", style="FilterLabel.TLabel").grid(row=1, column=2, padx=5, pady=5)
-        self.end_date_entry = ttk.Entry(self.filter_frame)
-        self.end_date_entry.grid(row=1, column=3, padx=5, pady=5)
+        
 
         # Filter Statuses
         ttk.Label(self.filter_frame, text="Filter by Statuses:", style="FilterLabel.TLabel").grid(row=2, column=0, padx=5, pady=5)
@@ -83,24 +74,25 @@ class HomePage:
 
         # Filter Priority
         ttk.Label(self.filter_frame, text="Filter by Priority:", style="FilterLabel.TLabel").grid(row=3, column=0, padx=5, pady=5)
-        self.priority_combobox = ttk.Combobox(self.filter_frame, values=["Low", "Medium", "High"])
-        self.priority_combobox.grid(row=3, column=1, padx=5, pady=5)
+        self.priority_vars = {priority: tk.BooleanVar() for priority in ["Low", "Medium", "High"]}
+        for idx, (priority, var) in enumerate(self.priority_vars.items()):
+            ttk.Checkbutton(self.filter_frame, text=priority, variable=var, style="FilterCheck.TCheckbutton").grid(row=3, column=idx+1, padx=5, pady=5)
+
+
 
         # Filter Button
         self.filter_button = ttk.Button(self.filter_frame, text="Apply Filter", command=self.apply_filter)
         self.filter_button.grid(row=4, column=0, columnspan=2, padx=5, pady=5)
-
+    
     def apply_filter(self):
         keywords = self.keywords_entry.get()
-        start_date = self.start_date_entry.get()
-        end_date = self.end_date_entry.get()
         selected_statuses = [status for status, var in self.statuses_var.items() if var.get()]
-        selected_priority = self.priority_combobox.get()
+        selected_priorities = [priority for priority, var in self.priority_vars.items() if var.get()]
+        filtered_tasks = taskfilter.filter_tasks(self.tasks, keywords, selected_statuses, selected_priorities)
 
-        filtered_tasks = taskfilter.filter_tasks(self.tasks, keywords, start_date, end_date, selected_statuses, selected_priority)
         self.update_task_list(filtered_tasks)
 
-
+   
     def add_task(self):
         task_dialog = TaskDialog(self.master)
         self.master.wait_window(task_dialog.top)
@@ -143,16 +135,14 @@ class HomePage:
             self.update_task_list()
 
     def update_task_list(self, tasks=None):
-        # Clear the existing tasks in the treeview
-        for item in self.task_tree.get_children():
-            self.task_tree.delete(item)
-        
-        if tasks:
-            for idx, task in enumerate(tasks, start=1):
-                self.task_tree.insert("", "end", text=idx, values=(task["title"], task["due_date"], task["priority"], task["status"], task.get("comments", "")))
-        else:
-            for idx, task in enumerate(self.tasks, start=1):
-                self.task_tree.insert("", "end", text=idx, values=(task["title"], task["due_date"], task["priority"], task["status"], task.get("comments", "")))
+        self.task_tree.delete(*self.task_tree.get_children())
+
+        if tasks is None:
+            tasks = self.tasks
+
+        for idx, task in enumerate(tasks, start=1):
+            self.task_tree.insert("", "end", text=idx, values=(task["title"], task["due_date"], task["priority"], task["status"], task.get("comments", "")))
+
     def show_pie_chart_window(self):
         PieChartWindow(self.master, self.tasks)
 
@@ -246,4 +236,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-
