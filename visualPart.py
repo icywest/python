@@ -11,11 +11,9 @@ class PieChartWindow:
         self.top = tk.Toplevel(master)
         self.top.title("Pie Chart")
         
-        # Create pie chart
         self.create_pie_chart()
 
     def create_pie_chart(self):
-        # Count status occurrences
         status_counts = {}
         for task in self.tasks:
             status = task["status"]
@@ -29,12 +27,10 @@ class PieChartWindow:
         sizes = list(status_counts.values())
         fig, ax = plt.subplots()
         ax.pie(sizes, labels=labels, autopct='%1.1f%%', startangle=90)
-        ax.axis('equal')  # Equal aspect ratio ensures that pie is drawn as a circle.
+        ax.axis('equal')
 
-        # Embed the pie chart into the Tkinter window
         canvas = FigureCanvasTkAgg(fig, master=self.top)
         canvas.draw()
         canvas.get_tk_widget().pack()
 
-        # Optionally, add a title
         ax.set_title("Task Status Distribution")

@@ -1,3 +1,4 @@
+from tkcalendar import Calendar
 import tkinter as tk
 from tkinter import ttk, messagebox
 from datetime import datetime
@@ -40,18 +41,21 @@ class HomePage:
         self.task_tree.heading("Status", text="Status")
         self.task_tree.heading("Comments", text="Comments")
         self.task_tree.grid(row=1, column=0, columnspan=2, padx=10, pady=5)
-        
+
         self.add_button = ttk.Button(self.main_frame, text="Add Task", command=self.add_task, style="AddButton.TButton")
-        self.add_button.grid(row=3, column=0, padx=5, pady=5, sticky="e")
-        
+        self.add_button.grid(row=3, column=0, padx=5, pady=5, sticky="ew")
+
         self.edit_button = ttk.Button(self.main_frame, text="Edit Task", command=self.edit_task, style="EditButton.TButton")
-        self.edit_button.grid(row=3, column=1, padx=5, pady=5, sticky="w")
-        
+        self.edit_button.grid(row=3, column=1, padx=5, pady=5, sticky="ew")
+
         self.delete_button = ttk.Button(self.main_frame, text="Delete Task", command=self.delete_task, style="DeleteButton.TButton")
-        self.delete_button.grid(row=4, column=0, padx=5, pady=5, sticky="e")
-        
+        self.delete_button.grid(row=4, column=0, padx=5, pady=5, sticky="ew")
+
         self.show_pie_chart_button = ttk.Button(self.main_frame, text="Show Pie Chart", command=self.show_pie_chart_window, style="ShowPieChartButton.TButton")
-        self.show_pie_chart_button.grid(row=4, column=1, padx=5, pady=5, sticky="w")
+        self.show_pie_chart_button.grid(row=4, column=1, padx=5, pady=5, sticky="ew")
+        
+        self.calendar_button = ttk.Button(self.main_frame, text="Show Calendar", command=self.show_calendar, style="CalendarButton.TButton")
+        self.calendar_button.grid(row=5, column=0, columnspan=2, padx=5, pady=5, sticky="ew")
         
         self.create_filter_widgets()
         self.update_task_list()
@@ -67,7 +71,7 @@ class HomePage:
         
 
         # Filter Statuses
-        ttk.Label(self.filter_frame, text="Filter by Statuses:", style="FilterLabel.TLabel").grid(row=2, column=0, padx=5, pady=5)
+        ttk.Label(self.filter_frame, text="Filter by Status:", style="FilterLabel.TLabel").grid(row=2, column=0, padx=5, pady=5)
         self.statuses_var = {status: tk.BooleanVar() for status in ["Pending", "In Progress", "Completed"]}
         for idx, (status, var) in enumerate(self.statuses_var.items()):
             ttk.Checkbutton(self.filter_frame, text=status, variable=var, style="FilterCheck.TCheckbutton").grid(row=2, column=idx+1, padx=5, pady=5)
@@ -77,8 +81,6 @@ class HomePage:
         self.priority_vars = {priority: tk.BooleanVar() for priority in ["Low", "Medium", "High"]}
         for idx, (priority, var) in enumerate(self.priority_vars.items()):
             ttk.Checkbutton(self.filter_frame, text=priority, variable=var, style="FilterCheck.TCheckbutton").grid(row=3, column=idx+1, padx=5, pady=5)
-
-
 
         # Filter Button
         self.filter_button = ttk.Button(self.filter_frame, text="Apply Filter", command=self.apply_filter)
@@ -92,7 +94,24 @@ class HomePage:
 
         self.update_task_list(filtered_tasks)
 
-   
+    def show_calendar(self):
+        self.calendar_window = tk.Toplevel(self.master)
+        self.calendar_window.title("Select Date")
+        
+        self.calendar = Calendar(self.calendar_window, selectmode='day', date_pattern='yyyy-mm-dd')
+        self.calendar.pack(padx=10, pady=10)
+        
+        select_button = ttk.Button(self.calendar_window, text="Select Date", command=self.select_date)
+        select_button.pack(pady=5)
+
+    def select_date(self):
+        selected_date = self.calendar.get_date()
+        filtered_tasks = taskfilter.filter_tasks_by_date(self.tasks, selected_date)
+        self.update_task_list(filtered_tasks)
+        self.calendar_window.destroy()
+
+
+
     def add_task(self):
         task_dialog = TaskDialog(self.master)
         self.master.wait_window(task_dialog.top)
@@ -169,7 +188,7 @@ class TaskDialog:
         
         # Due Date
         ttk.Label(self.top, text="Due Date:", style="DialogLabel.TLabel").grid(row=1, column=0, padx=5, pady=5)
-        self.due_date_entry = DateEntry(self.top, date_pattern="yyyy-mm-dd")  # Use DateEntry widget for date input
+        self.due_date_entry = DateEntry(self.top, date_pattern="yyyy-mm-dd")
         self.due_date_entry.grid(row=1, column=1, padx=5, pady=5)
         
         # Priority

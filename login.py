@@ -1,3 +1,4 @@
+
 import tkinter as tk
 from tkinter import ttk, messagebox
 import json
@@ -14,6 +15,13 @@ class LoginPage:
         self.create_widgets()
 
     def create_widgets(self):
+        style = ttk.Style()
+        style.configure('TFrame', background='#FFD1DC')
+        style.configure('TLabel', background='#FFD1DC')
+        style.configure('TEntry', fieldbackground='#FFF5F5')
+        style.configure('TButton', background='#FFB6C1')
+        style.map('TButton', background=[('active', '#FF808F')])
+
         # Frame for login form
         self.login_frame = ttk.Frame(self.master, padding="20")
         self.login_frame.pack()
@@ -41,7 +49,7 @@ class LoginPage:
         # Register button
         self.register_button = ttk.Button(self.login_frame, text="Register", command=self.show_register_window)
         self.register_button.grid(row=3, column=1, padx=5, pady=5)
-
+    
     def load_image(self):
         # Open the image file
         self.img = Image.open(self.image_path)

@@ -13,6 +13,13 @@ def filter_tasks(tasks, keywords, statuses, priorities):
 
     return filtered_tasks
 
+def filter_tasks_by_date(tasks, selected_date):
+    filtered_tasks = []
+    for task in tasks:
+        if task.get("due_date") == selected_date:
+            filtered_tasks.append(task)
+    return filtered_tasks
+
 def filter_by_keywords(tasks, keywords):
     return [task for task in tasks if keywords.lower() in task["title"].lower() or keywords.lower() in task.get("content", "").lower()]
 
